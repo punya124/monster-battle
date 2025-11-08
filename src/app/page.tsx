@@ -9,11 +9,11 @@ export default function HomePage() {
   const { connected, publicKey } = useWallet();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 text-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <nav className="flex justify-between items-center mb-12">
-          <h1 className="text-3xl font-bold">🐉 Monster Draw Battle</h1>
+          <h1 className="text-3xl font-bold">Monster Draw Battle</h1>
           <WalletMultiButton />
         </nav>
 
@@ -35,13 +35,13 @@ export default function HomePage() {
                 href="/upload"
                 className="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition"
               >
-                ✨ Create Monster
+                Create Monster
               </Link>
               <Link
                 href="/collection"
                 className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition"
               >
-                📚 My Collection
+                My Collection
               </Link>
             </div>
           ) : (
@@ -55,24 +55,21 @@ export default function HomePage() {
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
-            <div className="text-5xl mb-4">🎨</div>
             <h3 className="text-xl font-bold mb-2">Draw on Paper</h3>
             <p className="text-gray-300">Sketch your monster with pen and paper</p>
           </div>
 
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
-            <div className="text-5xl mb-4">🤖</div>
             <h3 className="text-xl font-bold mb-2">AI Analysis</h3>
             <p className="text-gray-300">Gemini AI generates balanced stats</p>
           </div>
 
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
-            <div className="text-5xl mb-4">⚔️</div>
             <h3 className="text-xl font-bold mb-2">PvP Battles</h3>
             <p className="text-gray-300">Fight other players in real-time</p>
           </div>
         </div>
-
+        
         {/* Stats */}
         {connected && (
           <div className="mt-12 text-center">
