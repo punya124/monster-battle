@@ -110,7 +110,7 @@ export default function UploadPage() {
 
     if (!connected) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black text-white flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br  text-white flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold mb-4">🔒 Wallet Not Connected</h1>
                     <p className="text-gray-300 mb-6">Please connect your wallet to create monsters</p>
