@@ -41,8 +41,10 @@ Your task:
 Return ONLY a valid JSON object with this exact structure (no markdown, no code blocks):
 {
   "name": "creative monster name",
+  "type": <choice between 'Fight', 'Freight' or 'Fairy'>
   "attack": <number between 1-10>,
   "defense": <number between 1-10>,
+  "speed": <number between 1-10>,
   "health": <number between 10-100>,
   "description": "brief 1-2 sentence description of the monster"
 }
@@ -50,6 +52,7 @@ Return ONLY a valid JSON object with this exact structure (no markdown, no code 
 Balance rules:
 - Attack stat: Based on aggressive features, sharp elements, weapons (1-10)
 - Defense stat: Based on armor, shields, bulk, protective features (1-10)
+- Speed stat: Based on aerodynammics and small size (1-10)
 - Health stat: Based on overall size and sturdiness (10-100)
 - Total stat budget: attack + defense + (health/10) should be between 12-18
 - Monsters with high attack should have lower defense
@@ -69,8 +72,10 @@ Balance rules:
         // Validate and ensure stats are within bounds
         const validatedData = {
             name: monsterData.name || 'Mystery Monster',
+            type: monsterData.type || "Unknown",
             attack: Math.min(10, Math.max(1, Math.round(monsterData.attack))),
             defense: Math.min(10, Math.max(1, Math.round(monsterData.defense))),
+            speed: Math.min(10, Math.max(1, Math.round(monsterData.speed))),
             health: Math.min(100, Math.max(10, Math.round(monsterData.health))),
             description: monsterData.description || 'A mysterious creature from the void.'
         };

@@ -60,8 +60,10 @@ export default function UploadPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: monsterData.name,
+                    type: monsterData.type,
                     attack: monsterData.attack,
                     defense: monsterData.defense,
+                    speed: monsterData.speed,
                     health: monsterData.health,
                     description: monsterData.description,
                     ownerWallet: publicKey.toString()
@@ -138,10 +140,10 @@ export default function UploadPage() {
                         <div className="bg-white/10 backdrop-blur rounded-lg p-6 mb-6">
                             <h2 className="text-2xl font-bold mb-4">⚡ Step 2: Monster Stats</h2>
                             <div className="bg-black/30 rounded-lg p-6">
-                                <h3 className="text-3xl font-bold text-center mb-2">{monsterData.name}</h3>
+                                <h3 className="text-3xl font-bold text-center mb-2">{monsterData.name} ({monsterData.type})</h3>
                                 <p className="text-gray-300 text-center mb-6">{monsterData.description}</p>
 
-                                <div className="grid grid-cols-3 gap-4">
+                                <div className="grid grid-cols-4 gap-4">
                                     <div className="text-center">
                                         <div className="text-4xl font-bold text-red-400">{monsterData.attack}</div>
                                         <div className="text-sm text-gray-400">Attack</div>
@@ -149,6 +151,10 @@ export default function UploadPage() {
                                     <div className="text-center">
                                         <div className="text-4xl font-bold text-blue-400">{monsterData.defense}</div>
                                         <div className="text-sm text-gray-400">Defense</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-4xl font-bold text-red-400">{monsterData.speed}</div>
+                                        <div className="text-sm text-gray-400">Speed</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-4xl font-bold text-green-400">{monsterData.health}</div>

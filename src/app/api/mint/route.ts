@@ -7,7 +7,7 @@ import { base58 } from '@metaplex-foundation/umi/serializers';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { name, attack, defense, health, description, imageUrl } = body;
+        const { name, type, attack, defense, speed, health, description, imageUrl } = body;
 
         if (!name) {
             return NextResponse.json({ error: 'Missing name' }, { status: 400 });
@@ -35,9 +35,11 @@ export async function POST(request: NextRequest) {
             symbol: "MNSTR",
             description: description || "A hand-drawn monster",
             image: imageUrl || "https://placeholder.com/monster.png",
+            type: type || "Unknown",
             attributes: [
                 { trait_type: "Attack", value: attack || 5 },
                 { trait_type: "Defense", value: defense || 5 },
+                { trait_type: "Speed", value: speed || 5 },
                 { trait_type: "Health", value: health || 50 }
             ]
         };
@@ -84,8 +86,10 @@ export async function POST(request: NextRequest) {
             explorerUrl: `https://explorer.solana.com/address/${mintSigner.publicKey}?cluster=devnet`,
             metadata: {
                 name,
+                type,
                 attack,
                 defense,
+                speed,
                 health
             }
         });
