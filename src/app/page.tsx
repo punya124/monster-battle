@@ -42,6 +42,12 @@ export default function HomePage() {
               >
                 📚 My Collection
               </Link>
+              <Link
+                href={`/battle/${Math.random().toString(36).substring(2, 8)}`}
+                className="inline-block bg-red-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition"
+              >
+                Go Fight!
+              </Link>
             </div>
           ) : (
             <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-6">
