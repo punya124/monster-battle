@@ -1,5 +1,5 @@
 const { Keypair } = require('@solana/web3.js');
-const bs58 = require('bs58');
+const bs58 = require('bs58').default;
 
 // Generate new keypair
 const keypair = Keypair.generate();
