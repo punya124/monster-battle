@@ -3,11 +3,18 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import { createSignerFromKeypair, generateSigner, percentAmount, signerIdentity } from '@metaplex-foundation/umi';
 import { createNft, mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import { base58 } from '@metaplex-foundation/umi/serializers';
+import { createClient } from '@supabase/supabase-js';
+import { v4 as uuidv4 } from 'uuid'; // Optional: for explicit ID if needed, but use DB default
+
+// Initialize Supabase client (use service role key for server-side inserts if RLS is enabled)
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { name, type, attack, defense, speed, health, description, imageUrl } = body;
+        const { ownerWallet, name, type, attack, defense, speed, health, description, imageUrl } = body;
 
         if (!name) {
             return NextResponse.json({ error: 'Missing name' }, { status: 400 });
@@ -79,9 +86,37 @@ export async function POST(request: NextRequest) {
         console.log('✅ NFT Minted!');
         console.log('Mint Address:', mintSigner.publicKey);
 
+        // Prepare monster data for Supabase (omit id to use DB default UUID)
+        const monsterData = {
+            mint_address: mintSigner.publicKey.toString(),
+            owner_wallet: ownerWallet,
+            name,
+            type: type || "Unknown",
+            attack: attack || 5,
+            defense: defense || 5, // Note: 'defense' matches your column name
+            speed: speed || 5,
+            health: health || 50,
+            energy: 15, // Default value as not provided
+            image_url: imageUrl || "https://placeholder.com/monster.png",
+            created_at: new Date().toISOString()
+        };
+
+        // Insert into Supabase monsters table
+        const { data: insertData, error: insertError } = await supabase
+            .from('monsters')
+            .insert(monsterData)
+            .select(); // Returns the inserted row for verification [web:3][web:5]
+
+        if (insertError) {
+            console.error('Supabase insert error:', insertError);
+            // Continue with success response even if insert fails (or handle as needed)
+        } else {
+            console.log('✅ Monster added to Supabase:', insertData);
+        }
+
         return NextResponse.json({
             success: true,
-            mintAddress: mintSigner.publicKey,
+            mintAddress: mintSigner.publicKey.toString(),
             signature: signature,
             explorerUrl: `https://explorer.solana.com/address/${mintSigner.publicKey}?cluster=devnet`,
             metadata: {
@@ -91,7 +126,8 @@ export async function POST(request: NextRequest) {
                 defense,
                 speed,
                 health
-            }
+            },
+            supabaseId: insertData ? insertData[0].id : null // Optional: return the new UUID
         });
 
     } catch (error: any) {

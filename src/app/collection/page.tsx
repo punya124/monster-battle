@@ -3,6 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function CollectionPage() {
     const { connected, publicKey } = useWallet();
@@ -12,34 +17,56 @@ export default function CollectionPage() {
     useEffect(() => {
         if (connected && publicKey) {
             fetchNFTs();
+        } else {
+            setNfts([]); // Clear on disconnect
+            setLoading(false);
         }
     }, [connected, publicKey]);
 
     const fetchNFTs = async () => {
-        // This would call your API to get NFTs from database
-        // For now, mock data for demo
-        setLoading(true);
-
-        setTimeout(() => {
-            setNfts([
-                {
-                    mintAddress: '8xj2vZP9rQ8h8MNy...',
-                    name: 'Fire Dragon',
-                    attack: 8,
-                    defense: 5,
-                    health: 70
-                },
-                {
-                    mintAddress: '9yK3wAp0sR9i9NpZ...',
-                    name: 'Water Serpent',
-                    attack: 6,
-                    defense: 7,
-                    health: 65
-                }
-            ]);
+        if (!publicKey || !supabase) {
             setLoading(false);
-        }, 1000);
+            return;
+        }
+
+        setLoading(true);
+        console.log('Fetching for wallet:', publicKey.toBase58()); // Log connected wallet
+
+        try {
+            const { data, error } = await supabase
+                .from('monsters')
+                .select('*, owner_wallet') // Include owner_wallet for debugging
+                .eq('owner_wallet', publicKey.toBase58());
+
+            console.log('Query error:', error); // Log any Supabase errors
+            console.log('Query data:', data); // Log returned rows
+
+            if (error) {
+                console.error('Error fetching monsters:', error);
+                setNfts([]);
+            } else {
+                const monsterNfts = data?.map(monster => ({
+                    id: monster.id,
+                    mintAddress: monster.mint_address,
+                    name: monster.name,
+                    type: monster.type,
+                    attack: monster.attack,
+                    defense: monster.defence,
+                    speed: monster.speed,
+                    health: monster.health,
+                    imageUrl: monster.image_url
+                })) || [];
+                console.log('Mapped NFTs:', monsterNfts); // Log processed data
+                setNfts(monsterNfts);
+            }
+        } catch (err) {
+            console.error('Unexpected error:', err);
+            setNfts([]);
+        } finally {
+            setLoading(false);
+        }
     };
+
 
     if (!connected) {
         return (
@@ -82,10 +109,16 @@ export default function CollectionPage() {
                 ) : (
                     <>
                         <div className="grid md:grid-cols-3 gap-6">
-                            {nfts.map((nft, idx) => (
-                                <div key={idx} className="bg-white/10 backdrop-blur rounded-lg p-6 hover:bg-white/20 transition">
-                                    <div className="bg-gradient-to-br from-purple-500 to-blue-500 h-48 rounded-lg mb-4 flex items-center justify-center text-6xl">
-                                        🐉
+                            {nfts.map((nft) => (
+                                <div key={nft.id} className="bg-white/10 backdrop-blur rounded-lg p-6 hover:bg-white/20 transition">
+                                    {/* Use real image or fallback */}
+                                    <div
+                                        className="bg-gradient-to-br from-purple-500 to-blue-500 h-48 rounded-lg mb-4 flex items-center justify-center text-6xl bg-cover bg-center"
+                                        style={{
+                                            backgroundImage: nft.imageUrl ? `url(${nft.imageUrl})` : 'none'
+                                        }}
+                                    >
+                                        {nft.imageUrl ? '' : '🐉'}
                                     </div>
                                     <h3 className="text-xl font-bold mb-2">{nft.name}</h3>
                                     <p className="text-sm text-gray-400 mb-4 truncate">{nft.mintAddress}</p>
@@ -106,7 +139,7 @@ export default function CollectionPage() {
                                     </div>
 
                                     <Link
-                                        href={`/battle/new`}
+                                        href={`/battle/new?monsterId=${nft.id}`}
                                         className="block w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-center"
                                     >
                                         ⚔️ Battle
