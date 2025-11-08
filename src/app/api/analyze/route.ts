@@ -41,7 +41,7 @@ Your task:
 Return ONLY a valid JSON object with this exact structure (no markdown, no code blocks):
 {
   "name": "creative monster name",
-  "type": <choice between 'Fight', 'Freight' or 'Fairy'>
+  "type": <choice between 'Fight', 'Fright' or 'Fairy'>,
   "attack": <number between 1-10>,
   "defense": <number between 1-10>,
   "speed": <number between 1-10>,
@@ -70,7 +70,7 @@ Balance rules:
         const monsterData = JSON.parse(jsonText);
 
         // Validate and ensure stats are within bounds
-        const validatedData = {
+        let validatedData = {
             name: monsterData.name || 'Mystery Monster',
             type: monsterData.type || "Unknown",
             attack: Math.min(10, Math.max(1, Math.round(monsterData.attack))),
@@ -80,9 +80,119 @@ Balance rules:
             description: monsterData.description || 'A mysterious creature from the void.'
         };
 
+        // Enforce stat budget balance (adjust if the parsed data exceeds)
+        const totalBudget = validatedData.attack + validatedData.defense + (validatedData.health / 10);
+        if (totalBudget > 18) {
+            // Scale down proportionally (simple adjustment; customize as needed)
+            const scaleFactor = 18 / totalBudget;
+            validatedData.attack = Math.round(validatedData.attack * scaleFactor);
+            validatedData.defense = Math.round(validatedData.defense * scaleFactor);
+            validatedData.health = Math.round(validatedData.health * scaleFactor);
+            // Re-clamp
+            validatedData.attack = Math.min(10, Math.max(1, validatedData.attack));
+            validatedData.defense = Math.min(10, Math.max(1, validatedData.defense));
+            validatedData.health = Math.min(100, Math.max(10, validatedData.health));
+        } else if (totalBudget < 12) {
+            // Scale up similarly
+            const scaleFactor = 12 / totalBudget;
+            validatedData.attack = Math.round(validatedData.attack * scaleFactor);
+            validatedData.defense = Math.round(validatedData.defense * scaleFactor);
+            validatedData.health = Math.round(validatedData.health * scaleFactor);
+            // Re-clamp
+            validatedData.attack = Math.min(10, Math.max(1, validatedData.attack));
+            validatedData.defense = Math.min(10, Math.max(1, validatedData.defense));
+            validatedData.health = Math.min(100, Math.max(10, validatedData.health));
+        }
+
         console.log('Analyzed monster:', validatedData);
 
-        return NextResponse.json(validatedData, { status: 200 });
+        // ... (previous code for validation and budget enforcement)
+
+        // NEW: Smart feature mapping based on stats
+        const statFeatures: Record<string, string[]> = {
+            attack: [
+                'sharp claws and fangs', 'spiked armor plating', 'glowing red eyes', 'muscular limbs with veins', 'barbed tail or horns',
+                'fiery breath aura', 'tattered wings for predatory swoops'
+            ],
+            defense: [
+                'thick armored hide or scales', 'heavy plated shell', 'shield-like bone structures', 'regenerative thorny exterior',
+                'impenetrable rock-like skin', 'crystalline barriers', 'massive bulky frame'
+            ],
+            health: [
+                'enormous towering size', 'robust and sturdy build', 'dense muscular body', 'glowing vitality runes',
+                'ancient weathered but enduring form', 'regenerating tendrils', 'colossal mass with deep roots'
+            ],
+            speed: [
+                'sleek aerodynamic form', 'elongated agile limbs', 'feathered or finned wings', 'streamlined body with minimal bulk',
+                'blurred motion trails', 'lightweight ethereal wisps', 'nimble tentacle arrays'
+            ]
+        };
+
+        // Determine dominant stat (highest value, tiebreak by order: attack > defense > health > speed)
+        const stats = {
+            attack: validatedData.attack,
+            defense: validatedData.defense,
+            health: validatedData.health,
+            speed: validatedData.speed
+        };
+        const sortedStats = Object.entries(stats)
+            .sort(([, a], [, b]) => b - a)
+            .map(([key]) => key);
+        const dominantStat = sortedStats[0];  // e.g., 'attack' if highest
+        const secondaryStat = sortedStats[1] || dominantStat;  // For subtle secondary traits
+
+        // Select 3-5 features: 2-3 from dominant, 1 from secondary, 1 from type
+        const dominantFeatures = statFeatures[dominantStat].slice(0, Math.min(3, statFeatures[dominantStat].length));
+        const secondaryFeature = statFeatures[secondaryStat][Math.floor(Math.random() * statFeatures[secondaryStat].length)];
+        const typeFeatures: Record<'Fight' | 'Fright' | 'Fairy', string> = {
+            Fight: 'aggressive stance, battle scars, weapon-like appendages',
+            Fright: 'scary ghost-like features, exaggerated teeth, blood, unsettling look',  // Assuming 'fright' is a type variant (e.g., heavy-duty)
+            Fairy: 'ethereal glowing aura, delicate wings, magical particle effects'
+        };
+
+        // Combine features into a dynamic description
+        const featureDescription = [
+            ...dominantFeatures,
+            secondaryFeature,
+            typeFeatures
+        ].join(', ');
+
+        // Generate the smart prompt
+        const imagePrompt = `Enhance this hand-drawn monster into a dynamic, high-detail fantasy illustration. Name: ${validatedData.name}, a ${validatedData.type} type creature. Description: ${validatedData.description}. Key visual stats: High ${dominantStat} emphasized with ${featureDescription}. Balance with moderate ${secondaryStat} traits. Overall: Vibrant colors, clean lines, intricate textures, dramatic lighting, and subtle particle effects. Preserve original pose, proportions, and core features while adding depth and realism—no background, focus on the monster.`;
+
+
+        // NEW: Call the internal /api/enhance-sketch endpoint with form data (sketch + prompt)
+        // Create a new FormData for the internal request
+        const enhanceFormData = new FormData();
+        const sketchBlob = new Blob([buffer], { type: imageFile.type });  // Reuse the original buffer as Blob
+        enhanceFormData.append('sketch', sketchBlob, imageFile.name || 'sketch.png');
+        enhanceFormData.append('prompt', imagePrompt);
+
+        const enhanceResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/enhance-sketch`, {
+            method: 'POST',
+            body: enhanceFormData,
+        });
+
+        let generatedImage = null;
+        if (enhanceResponse.ok) {
+            const imageData = await enhanceResponse.json();
+            generatedImage = {
+                url: imageData.enhancedImageUrl || null,
+                fileName: imageData.fileName || null,
+                promptUsed: imagePrompt
+            };
+        } else {
+            console.warn('Image enhancement failed:', enhanceResponse.statusText);
+            // Proceed without image data
+        }
+
+        // Include image results in response
+        const finalResponse = {
+            ...validatedData,
+            generatedImage
+        };
+
+        return NextResponse.json(finalResponse, { status: 200 });
 
     } catch (error) {
         console.error('Error analyzing monster:', error);
@@ -91,11 +201,14 @@ Balance rules:
         return NextResponse.json(
             {
                 name: 'Glitch Beast',
+                type: 'Fight',
                 attack: 5,
                 defense: 5,
+                speed: 5,
                 health: 50,
                 description: 'A creature born from analysis errors.',
-                error: 'Analysis failed, using default stats'
+                error: 'Analysis failed, using default stats',
+                generatedImage: null
             },
             { status: 200 } // Still return 200 so the flow continues
         );
