@@ -4,6 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import Link from 'next/link';
 
+
 export default function HomePage() {
   const { connected, publicKey } = useWallet();
 
@@ -41,12 +42,6 @@ export default function HomePage() {
                 className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition"
               >
                 📚 My Collection
-              </Link>
-              <Link
-                href={`/battle/${Math.random().toString(36).substring(2, 8)}`}
-                className="inline-block bg-red-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition"
-              >
-                Go Fight!
               </Link>
             </div>
           ) : (

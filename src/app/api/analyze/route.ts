@@ -109,24 +109,44 @@ Balance rules:
         // ... (previous code for validation and budget enforcement)
 
         // NEW: Smart feature mapping based on stats
+        // Enhanced: Pokémon-style feature mapping based on stats
+        // Adds more animal-inspired, elemental, and whimsical traits for variety
         const statFeatures: Record<string, string[]> = {
             attack: [
-                'sharp claws and fangs', 'spiked armor plating', 'glowing red eyes', 'muscular limbs with veins', 'barbed tail or horns',
-                'fiery breath aura', 'tattered wings for predatory swoops'
+                // Aggressive, predatory, weaponized traits like Charizard or Garchomp
+                'sharp claws and fangs like a dragon', 'spiked armor plating with razor edges', 'glowing red eyes full of fury',
+                'muscular limbs bulging with power', 'barbed tail whipping through air', 'fiery breath aura from maw',
+                'tattered wings for aerial strikes', 'venomous stingers on tail or horns', 'jagged rock spikes protruding from back',
+                'electric crackling claws', 'massive horned forehead for charging', 'serpentine coils ready to strike'
             ],
             defense: [
-                'thick armored hide or scales', 'heavy plated shell', 'shield-like bone structures', 'regenerative thorny exterior',
-                'impenetrable rock-like skin', 'crystalline barriers', 'massive bulky frame'
+                // Tough, armored, resilient traits like Onix or Bastiodon
+                'thick armored hide of steel scales', 'heavy plated shell like a fortress', 'shield-like bone structures',
+                'regenerative thorny exterior that hardens', 'impenetrable rock-like skin with embedded gems',
+                'crystalline barriers shimmering defensively', 'massive bulky frame with layered plating',
+                'spiky carapace deflecting blows', 'earthen mossy armor blending with ground', 'icy frost coating for barriers',
+                'woody bark shielding vital areas', 'metallic exoskeleton with riveted joints'
             ],
             health: [
-                'enormous towering size', 'robust and sturdy build', 'dense muscular body', 'glowing vitality runes',
-                'ancient weathered but enduring form', 'regenerating tendrils', 'colossal mass with deep roots'
+                // Vital, enduring, growth-oriented traits like Snorlax or Venusaur
+                'enormous towering size with sturdy legs', 'robust build overflowing with energy',
+                'dense muscular body pulsing with life', 'glowing vitality runes on skin or leaves',
+                'ancient weathered but enduring form like an elder tree', 'regenerating tendrils or vines',
+                'colossal mass rooted deeply into earth', 'blooming flower bulbs storing power',
+                'hearty fur coat for warmth and protection', 'bioluminescent veins showing inner strength',
+                'mushroom caps sprouting from back for healing', 'shell with embedded healing crystals'
             ],
             speed: [
-                'sleek aerodynamic form', 'elongated agile limbs', 'feathered or finned wings', 'streamlined body with minimal bulk',
-                'blurred motion trails', 'lightweight ethereal wisps', 'nimble tentacle arrays'
+                // Agile, swift, evasive traits like Jolteon or Pidgeot
+                'sleek aerodynamic form like a cheetah', 'elongated agile limbs for quick dashes',
+                'feathered wings flapping rapidly', 'streamlined body with fin-like appendages',
+                'blurred motion trails from speed', 'lightweight ethereal wisps trailing behind',
+                'nimble tentacle arrays for grabbing', 'wind-swept fur or scales for aerodynamics',
+                'lightning-fast leg muscles like a rabbit', 'hovering levitation orbs for flight',
+                'slimy trail for slippery escapes', 'bird-like talons for perching and leaping'
             ]
         };
+
 
         // Determine dominant stat (highest value, tiebreak by order: attack > defense > health > speed)
         const stats = {
@@ -158,7 +178,7 @@ Balance rules:
         ].join(', ');
 
         // Generate the smart prompt
-        const imagePrompt = `Enhance this hand-drawn monster into a dynamic, high-detail fantasy illustration. Name: ${validatedData.name}, a ${validatedData.type} type creature. Description: ${validatedData.description}. Key visual stats: High ${dominantStat} emphasized with ${featureDescription}. Balance with moderate ${secondaryStat} traits. Overall: Vibrant colors, clean lines, intricate textures, dramatic lighting, and subtle particle effects. Preserve original pose, proportions, and core features while adding depth and realism—no background, focus on the monster.`;
+        const imagePrompt = `Transform this hand-drawn sketch into a vibrant Pokémon-style creature illustration, full of personality and elemental magic. Name: ${validatedData.name}, a ${validatedData.type}-type monster with high ${dominantStat} stats. Core traits: ${featureDescription}. Incorporate moderate ${secondaryStat} elements for balance. Style: Bold outlines, saturated colors, glossy textures like official Pokémon art, dynamic pose with subtle energy effects—no background, isolated on white. Don't make it overly muscular and humanoid, take more inspiration from animal bodies`;
 
 
         // NEW: Call the internal /api/enhance-sketch endpoint with form data (sketch + prompt)
