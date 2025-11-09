@@ -29,16 +29,28 @@ export async function GET(request: NextRequest) {
         console.error('Supabase error:', errMoves.message);
         return NextResponse.json({ error: errMoves.message }, { status: 500 });
     }
-    
-    const { data: monsters, error: errMons } = await supabase
-        .from('monsters')
-        .select('*')
-        .in('id', [monster1, monster2]); // fetch where id is in [1, 3]
 
-    if (errMons) {
-        console.error('Supabase error:', errMons.message);
-        return NextResponse.json({ error: errMons.message }, { status: 500 });
+    const { data: mon1, error: errPl } = await supabase
+            .from('monsters')
+            .select('*')
+            .eq('id', monster1) // Or eq('nft_id', id)
+            .single();
+        if (errPl) {
+            console.error('Supabase error:', errPl.message);
+        return NextResponse.json({ error: errPl.message }, { status: 500 });
     }
+    const { data: mon2, error: errOpp } = await supabase
+            .from('monsters_enemies')
+            .select('*')
+            .eq('id', monster2) // Or eq('nft_id', id)
+            .single();
+        if (errOpp) {
+            console.error('Supabase error:', errOpp.message);
+        return NextResponse.json({ error: errOpp.message }, { status: 500 });
+    }
+
+
+    
 
 
     const res ={
@@ -65,9 +77,9 @@ export async function GET(request: NextRequest) {
     else {
     // Defense status is the same (moves[0].isDefense === moves[1].isDefense)
     // The faster monster goes first.
-    if (monsters[0].speed > monsters[1].speed) {
+    if (mon1.speed > mon2.speed) {
         res.first = 1; // Monster 0 is faster
-    } else if (monsters[1].speed > monsters[0].speed) {
+    } else if (mon2.speed > mon1.speed) {
         res.first = 0; // Monster 1 is faster
     } else {
         // Speeds are equal (tie). You'll need a rule for this (e.g., random or Monster 0 goes first).
@@ -84,8 +96,8 @@ export async function GET(request: NextRequest) {
         'Fright': 'Fairy'
     };
 
-    const type0 = monsters[0].type; 
-    const type1 = monsters[1].type; 
+    const type0 = mon1.type; 
+    const type1 = mon2.type; 
 
     let mult0 = 1.0; 
     let mult1 = 1.0; 
@@ -106,8 +118,8 @@ export async function GET(request: NextRequest) {
     }
 
 
-    res.player.health = player.health-(mult0*monsters[1].attack*moves[1].attack_mulitplier)/monsters[0].health;
-    res.opp.health = opp.health-(mult1*monsters[0].attack*moves[0].attack_mulitplier)/monsters[1].health;
+    res.player.health = player.health-(mult0*mon2.attack*moves[1].attack_mulitplier)/mon1.health;
+    res.opp.health = opp.health-(mult1*mon1.attack*moves[0].attack_mulitplier)/mon2.health;
 
     res.player.energy = player.energy-moves[0].energy_cost;
     res.opp.energy = opp.energy-moves[1].energy_cost;
