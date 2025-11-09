@@ -178,7 +178,7 @@ Balance rules:
         ].join(', ');
 
         // Generate the smart prompt
-        const imagePrompt = `Transform this hand-drawn sketch into a vibrant Pokémon-style creature illustration, full of personality and elemental magic. Name: ${validatedData.name}, a ${validatedData.type}-type monster with high ${dominantStat} stats. Core traits: ${featureDescription}. Incorporate moderate ${secondaryStat} elements for balance. Style: Bold outlines, saturated colors, glossy textures like official Pokémon art, dynamic pose with subtle energy effects—no background, isolated on white. Don't make it overly muscular and humanoid, take more inspiration from animal bodies`;
+        const imagePrompt = `Transform this hand-drawn sketch into a vibrant Pokémon-style creature illustration, full of personality and elemental magic. The generated creature's silhouette must strictly follow the outline of the provided hand-drawn sketch, using it as a structural reference. A ${validatedData.type}-type monster with high ${dominantStat} stats. Include ${featureDescription}. Incorporate moderate ${secondaryStat} elements for balance. The creature's body should be inspired by a mix of animal features. Style: Bold outlines, saturated colors, glossy textures like official Pokémon art, dynamic pose with subtle energy effects. The creature should be isolated on a pure black background with studio lighting.`;
 
 
         // NEW: Call the internal /api/enhance-sketch endpoint with form data (sketch + prompt)
