@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AuroraBackground } from '@/components/ui/aurora-background';
 
 export default function UploadPage() {
     const { connected, publicKey } = useWallet();
@@ -123,8 +124,9 @@ export default function UploadPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black text-white">
-            <div className="container mx-auto px-4 py-8">
+        <div className="relative min-h-screen flex flex-col overflow-hidden">
+            <AuroraBackground children={undefined} className='absolute top-0 left-0 h-full w-screen' />
+            <div className="relative h-full w-full container mx-auto px-4 py-8 z-10">
                 <div className="flex justify-between items-center mb-8">
                     <Link href="/" className="text-2xl font-bold">← Back</Link>
                     <h1 className="text-3xl font-bold">Create Monster</h1>

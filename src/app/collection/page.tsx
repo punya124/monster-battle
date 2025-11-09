@@ -286,12 +286,14 @@ export default function CollectionPage() {
                                         </div>
 
                                         {/* Battle Button */}
-                                        <CardItem translateZ={0} as={button}
-                                            onClick={() => writeBattleDB(nft)}
-                                            className="block w-full bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 rounded-xl text-center shadow-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
-                                        >
-                                            ⚔️ Battle
-                                        </CardItem>
+                                        <div className='w-full p-3'
+                                            onClick={() => writeBattleDB(nft)}>
+                                            <CardItem translateZ={0} as={button}
+                                                className="block w-full bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl text-center shadow-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] p-3"
+                                            >
+                                                ⚔️ Battle
+                                            </CardItem>
+                                        </div>
                                     </CardBody>
                                 </CardContainer>
                             ))}

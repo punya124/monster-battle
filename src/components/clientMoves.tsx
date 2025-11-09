@@ -126,7 +126,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                 const opponentDamage = calculateDamage(pcm, player, ocm, opponent);
                 const playerDamage = calculateDamage(ocm, opponent, pcm, player);
 
-                if (pcm.speed * player.speed <= ocm.speed * opponent.speed) {
+                if (pcm.speed_multiplier * player.speed <= ocm.speed_multiplier * opponent.speed) {
                     if (await setPlayerDB(playerDamage, pcm.energy_cost) > 0) {
                         setOppDB(opponentDamage, ocm.energy)
                     }
@@ -142,8 +142,6 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                     }
                     // when opponent gets hit:
                     setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
-
-
                 }
                 else {
                     if (await setOppDB(opponentDamage, ocm.energy_cost) > 0) {
@@ -175,7 +173,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
             <AuroraBackground children={undefined} />
             {/* Opponent Section */}
             <div className={[
-                "h-100 w-100 rounded-full bg-black absolute -right-16 -top-16 overflow-hidden flex items-end-safe justify-center",
+                "h-100 w-100 rounded-full bg-black absolute -right-16 -top-16 overflow-hidden flex items-center justify-center",
                 // valid z-index utility
                 "z-10",
                 // outline color by player.type
@@ -222,7 +220,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
             {/* Player Section */}
             <div
                 className={[
-                    "h-100 w-100 rounded-full bg-black absolute left-[-4rem] bottom-[-4rem] overflow-hidden flex items-start justify-center",
+                    "h-100 w-100 rounded-full bg-black absolute left-[-4rem] bottom-[-4rem] overflow-hidden flex items-center justify-center",
                     // valid z-index utility
                     "z-10",
                     // outline color by player.type
@@ -298,17 +296,6 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                     })}
                 </div>
             </div>
-            {popup && (
-                <>
-                    <h2>{popup.move.name} was used!</h2>
-                    <AttackPopups
-                        key={popup.id}
-                        move={popup.move}
-                        damage={popup.damage}
-                        receiver={popup.receiver}
-                    />
-                </>
-            )}
             {
                 playerHealth <= 0 && (
                     <WinLosePopup
@@ -327,6 +314,17 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                     />
                 )
             }
+            {popup && (
+                <>
+                    <h2>{popup.move.name} was used!</h2>
+                    <AttackPopups
+                        key={popup.id}
+                        move={popup.move}
+                        damage={popup.damage}
+                        receiver={popup.receiver}
+                    />
+                </>
+            )}
         </div>
     );
 }

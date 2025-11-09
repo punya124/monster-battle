@@ -60,7 +60,7 @@ export default function WinLosePopup({
                             <img
                                 src={imageUrl}
                                 alt={name}
-                                width={320}
+                                width={'auto'}
                                 height={320}
                                 className={cn(
                                     "h-48 w-48 md:h-56 md:w-56 object-cover rounded-lg border",
