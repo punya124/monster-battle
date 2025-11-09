@@ -127,39 +127,44 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                 const playerDamage = Math.round(calculateDamage(ocm, opponent, pcm, player) * 0.8);
 
                 if (pcm.speed_multiplier * player.speed <= ocm.speed_multiplier * opponent.speed) {
-                    if (await setPlayerDB(playerDamage, pcm.energy_cost) > 0) {
-                        setOppDB(opponentDamage, ocm.energy)
-                    }
 
                     // when player gets hit:
                     setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
 
                     await wait(2500); // let popup animate
+
+                    // when opponent gets hit:
+                    setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
+
+                    if (await setPlayerDB(playerDamage, pcm.energy_cost) > 0) {
+                        setOppDB(opponentDamage, ocm.energy)
+                    }
+
 
                     setPlayerHealth(playerHealth - playerDamage);
                     if (playerHealth > 0) {
                         setOpponentHealth(opponentHealth - opponentDamage);
                     }
-                    // when opponent gets hit:
-                    setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
                 }
                 else {
-                    if (await setOppDB(opponentDamage, ocm.energy_cost) > 0) {
-                        setPlayerDB(playerDamage, pcm.energy)
-                    }
-
                     // when opponent gets hit:
                     setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
 
                     await wait(2500); // let popup animate
 
+                    // when player gets hit:
+                    setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
+
+                    if (await setOppDB(opponentDamage, ocm.energy_cost) > 0) {
+                        setPlayerDB(playerDamage, pcm.energy)
+                    }
+
+
+
                     setOpponentHealth(opponentHealth - opponentDamage);
                     if (playerHealth > 0) {
                         setPlayerHealth(playerHealth - playerDamage);
                     }
-
-                    // when player gets hit:
-                    setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
 
 
                 }
