@@ -24,6 +24,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
     const [playerHealth, setPlayerHealth] = useState(battle.player_health);
     const [opponentHealth, setOpponentHealth] = useState(battle.opp_health);
     const [popup, setPopup] = useState<null | { move: any; damage: number; receiver: 'p' | 'o'; id: number }>(null);
+    const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
         setBattleData(battle);
@@ -51,7 +52,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
         console.log(adv[attack_move.type] + " " + defender.type);
         console.log("Attacker: " + attack_move.type + " Defender:  " + defender.type + " -> " + type_mult)
         const damage = (attack_move.attack_multiplier * attacker.attack * type_mult) / (defense_move.defense_multiplier * defender.defense)
-        return Math.round(damage * 5);
+        return Math.round(damage * 10);
     }
 
     async function setPlayerDB(playerDamage: number, energy: number) {
@@ -104,7 +105,6 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
     async function runMove(moveId: number): Promise<void> {
         const opp_move = getRandomInt(1, 30)
 
-
         const { data: move_data, error: errMove } = await supabase
             .from('moves')
             .select('*')
@@ -114,7 +114,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
             console.log("moves not found");
         }
 
-        if (move_data) {
+        if (move_data && !isAnimating) {
 
             console.log(move_data)
 
@@ -130,11 +130,11 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
                     // when player gets hit:
                     setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
-
+                    setIsAnimating(true)
                     await wait(2500); // let popup animate
+                    setIsAnimating(false)
 
-                    // when opponent gets hit:
-                    setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
+
 
                     if (await setPlayerDB(playerDamage, pcm.energy_cost) > 0) {
                         setOppDB(opponentDamage, ocm.energy)
@@ -143,17 +143,23 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
                     setPlayerHealth(playerHealth - playerDamage);
                     if (playerHealth > 0) {
+                        // when opponent gets hit:
+                        setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
+                        setIsAnimating(true)
+                        await wait(2500); // let popup animate
+                        setIsAnimating(false)
+
                         setOpponentHealth(opponentHealth - opponentDamage);
                     }
                 }
                 else {
                     // when opponent gets hit:
                     setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
-
+                    setIsAnimating(true)
                     await wait(2500); // let popup animate
+                    setIsAnimating(false)
 
-                    // when player gets hit:
-                    setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
+
 
                     if (await setOppDB(opponentDamage, ocm.energy_cost) > 0) {
                         setPlayerDB(playerDamage, pcm.energy)
@@ -163,6 +169,11 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
                     setOpponentHealth(opponentHealth - opponentDamage);
                     if (playerHealth > 0) {
+                        // when player gets hit:
+                        setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
+                        setIsAnimating(true)
+                        await wait(2500); // let popup animate
+                        setIsAnimating(false)
                         setPlayerHealth(playerHealth - playerDamage);
                     }
 
@@ -320,14 +331,14 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                 )
             }
             {popup && (
-                <>
+                <div className='h-screen w-screen absolute top-0 left-0'>
                     <AttackPopups
                         key={popup.id}
                         move={popup.move}
                         damage={popup.damage}
                         receiver={popup.receiver}
                     />
-                </>
+                </div>
             )}
         </div>
     );

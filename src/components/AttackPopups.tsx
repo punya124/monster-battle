@@ -51,7 +51,37 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
   text-shadow:
     0 0 8px rgba(255,255,255,0.5),
     0 2px 10px rgba(0,0,0,0.45);
-  padding: 2px 6px; border-radius: 4px; 
+  padding: 2px 6px; border-radius: 4px;
+  /* Bottom-right action banner */
+@keyframes actionFade {
+  0%   { opacity: 0; transform: translateY(8px); }
+  10%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(6px); }
+}
+.action-banner {
+  
+  z-9999
+  max-width: 60vw;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(17,17,17,0.82);
+  font-weight: 700;
+  font-size: 64px;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  box-shadow:
+    0 2px 10px rgba(0,0,0,0.35),
+    0 0 10px rgba(255,255,255,0.08);
+  animation: actionFade 2000ms ease-out forwards;
+  pointer-events: none;
+  user-select: none;
+  will-change: opacity, transform;
+}
+.action-banner .move {
+  color: #fde68a;
+}
+
 }
 `;
             document.head.appendChild(style);
@@ -60,8 +90,11 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
 
 
     // Target anchor position: player at 1/3, opponent at 2/3
-    const popupX = receiver === "p" ? "33.3333%" : "66.6667%";
-    const popupY = receiver === "p" ? "66.6667%" : "33.3333%";
+    const popupX = receiver === "p" ? "33vw" : "66vw";
+    const popupY = receiver === "p" ? "66vh" : "33vh";
+
+    const actor = receiver === 'o' ? 'Player' : 'Opponent';
+    const actionText = `${actor} used ${move?.name ?? 'move'}`;
 
     // Projectile config:
     // Opponent target: start bottom-left, travel to top-right.
@@ -126,6 +159,28 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
             >
                 -{damage}
             </div>
+            {/* Action banner bottom-right */}
+            <div className={[
+                "action-banner absolute right-8 bottom-8 ",
+                // valid z-index utility
+                "z-10",
+                // outline color by player.type
+                move.type === "Fight"
+                    ? "text-red-500"
+                    : move.type === "Fairy"
+                        ? "text-pink-500"
+                        : move.type === "Fright"
+                            ? "text-purple-900"
+                            : " text-red-200", // Neutral / default
+            ].join(" ")}
+            >
+                {actionText.replace(/\s+/g, ' ').trim().replace(
+                    move?.name ?? 'move',
+                    ''
+                )}
+                <span className="move">{move?.name ?? 'move'}</span>
+            </div>
+
         </>
     );
 }
