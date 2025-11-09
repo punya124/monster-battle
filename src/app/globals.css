@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@theme inline {
+  --animate-aurora: aurora 60s linear infinite;
+
+  @keyframes aurora {
+    from {
+      background-position:
+        50% 50%,
+        50% 50%;
+    }
+
+    to {
+      background-position:
+        350% 50%,
+        350% 50%;
+    }
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -71,12 +89,19 @@ body {
 
 /* Optional — slight floating animation when idle */
 @keyframes floatCard {
-  0% { transform: translateY(0px) rotate(var(--tilt, 0deg)); }
-  50% { transform: translateY(-4px) rotate(calc(var(--tilt, 0deg) + 0.5deg)); }
-  100% { transform: translateY(0px) rotate(var(--tilt, 0deg)); }
+  0% {
+    transform: translateY(0px) rotate(var(--tilt, 0deg));
+  }
+
+  50% {
+    transform: translateY(-4px) rotate(calc(var(--tilt, 0deg) + 0.5deg));
+  }
+
+  100% {
+    transform: translateY(0px) rotate(var(--tilt, 0deg));
+  }
 }
 
 .draggable-card-body:not(:active):not(.is-dragging) {
   animation: floatCard 6s ease-in-out infinite;
 }
-

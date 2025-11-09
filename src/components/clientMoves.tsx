@@ -5,6 +5,8 @@ import { HealthBar } from './ui/HealthBar';
 import WinLosePopup from './WinLosePopup';
 import AttackPopups from '@/components/AttackPopups';
 import StaticBackground from './StaticBackgrounds';
+import { AuroraBackground } from './ui/aurora-background';
+import { motion } from 'motion/react';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -168,7 +170,9 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
     }
 
     return (
-        <div className="min-h-screen bg-white flex flex-col relative overflow-hidden outli">
+        <div className="relative min-h-screen flex flex-col overflow-hidden">
+
+            <AuroraBackground children={undefined} />
             {/* Opponent Section */}
             <div className={[
                 "h-100 w-100 rounded-full bg-black absolute -right-16 -top-16 overflow-hidden flex items-end-safe justify-center",
