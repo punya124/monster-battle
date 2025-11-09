@@ -4,16 +4,15 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import Link from 'next/link';
 
-
 export default function HomePage() {
   const { connected, publicKey } = useWallet();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-br  text-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <nav className="flex justify-between items-center mb-12">
-          <h1 className="text-3xl font-bold">🐉 Monster Draw Battle</h1>
+          <h1 className="text-3xl font-bold">Monster Draw Battle</h1>
           <WalletMultiButton />
         </nav>
 
@@ -35,13 +34,13 @@ export default function HomePage() {
                 href="/upload"
                 className="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition"
               >
-                ✨ Create Monster
+                Create Monster
               </Link>
               <Link
                 href="/collection"
                 className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition"
               >
-                📚 My Collection
+                My Collection
               </Link>
             </div>
           ) : (
@@ -52,22 +51,51 @@ export default function HomePage() {
           )}
         </div>
 
+        {/* Before & After Section */}
+        <div className="mt-20 max-w-4xl mx-auto text-center">
+          <h3 className="text-3xl font-bold mb-6">From Sketch to NFT</h3>
+          <p className="text-gray-300 mb-8">
+            Watch your scribbles come to life through the power of Gemini, NFTs, and more.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white/10 p-4 rounded-lg">
+              <h4 className="text-lg font-semibold mb-2">Original Drawing</h4>
+              <img
+                src="/monsterIMGs/drawn.jpeg"
+                alt="Drawn Monster"
+                height="600"
+                width="600"
+                className="rounded-lg"
+              />
+            </div>
+
+            <div className="bg-white/10 p-4 rounded-lg">
+              <h4 className="text-lg font-semibold mb-2">AI Enhanced</h4>
+              <img
+                src="/monsterIMGs/generated.png"
+                alt="AI Enhanced Monster"
+                height="400"
+                width="400"
+                className="rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Features */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="mt-20 grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
-            <div className="text-5xl mb-4">🎨</div>
             <h3 className="text-xl font-bold mb-2">Draw on Paper</h3>
             <p className="text-gray-300">Sketch your monster with pen and paper</p>
           </div>
 
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
-            <div className="text-5xl mb-4">🤖</div>
             <h3 className="text-xl font-bold mb-2">AI Analysis</h3>
             <p className="text-gray-300">Gemini AI generates balanced stats</p>
           </div>
 
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
-            <div className="text-5xl mb-4">⚔️</div>
             <h3 className="text-xl font-bold mb-2">PvP Battles</h3>
             <p className="text-gray-300">Fight other players in real-time</p>
           </div>
@@ -77,7 +105,8 @@ export default function HomePage() {
         {connected && (
           <div className="mt-12 text-center">
             <p className="text-sm text-gray-400">
-              Connected: {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
+              Connected: {publicKey?.toString().slice(0, 8)}...
+              {publicKey?.toString().slice(-8)}
             </p>
           </div>
         )}
