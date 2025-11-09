@@ -2,6 +2,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
 import { HealthBar } from './ui/HealthBar';
+import WinLosePopup from './WinLosePopup';
+import AttackPopups from '@/components/AttackPopups';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -258,11 +260,25 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                         );
                     })}
                 </div>
-
             </div>
+            {
+                playerHealth <= 0 && (
+                    <WinLosePopup
+                        imageUrl={player.image_url}
+                        name={player.name}
+                        result='lose'
+                    />
+                )
+            }
+            {
+                opponentHealth <= 0 && (
+                    <WinLosePopup
+                        imageUrl={player.image_url}
+                        name={player.name}
+                        result='win'
+                    />
+                )
+            }
         </div>
     );
 }
-
-
-

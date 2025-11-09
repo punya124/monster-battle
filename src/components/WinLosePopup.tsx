@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
 import { cn } from "@/lib/utils";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card"; // adjust import to your file
 
@@ -59,7 +57,7 @@ export default function WinLosePopup({
                         </CardItem>
 
                         <CardItem translateZ={50} className="rounded-lg overflow-hidden">
-                            <Image
+                            <img
                                 src={imageUrl}
                                 alt={name}
                                 width={320}
@@ -68,7 +66,6 @@ export default function WinLosePopup({
                                     "h-48 w-48 md:h-56 md:w-56 object-cover rounded-lg border",
                                     borderColor
                                 )}
-                                priority
                             />
                         </CardItem>
 
@@ -100,3 +97,4 @@ export default function WinLosePopup({
         </div>
     );
 }
+
