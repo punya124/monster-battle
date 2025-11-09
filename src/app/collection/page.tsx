@@ -4,15 +4,24 @@ import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+type Monster = {
+    id: string,
+    health: number,
+
+}
+
 export default function CollectionPage() {
     const { connected, publicKey } = useWallet();
     const [nfts, setNfts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const router = useRouter();
 
     useEffect(() => {
         if (connected && publicKey) {
@@ -80,6 +89,65 @@ export default function CollectionPage() {
                 return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
         }
     };
+
+    function getRandomInt(min: number, max: number): number {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        // The maximum is inclusive and the minimum is inclusive
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    async function fetchRandomMoveIds(): Promise<number[] | null> {
+        // 1. Make the RPC call without the generic type. 'data' will be of type 'any'.
+        const { data, error } = await supabase
+            .rpc('get_three_random_move_ids');
+
+        if (error) {
+            console.error('Error fetching random move IDs:', error);
+            return null;
+        }
+
+        // 2. Use a type assertion to tell TypeScript the actual shape of 'data'.
+        const moveObjects = data as { id: number }[];
+
+        // 3. Handle the case where no data is returned.
+        if (!moveObjects) {
+            return [];
+        }
+
+        // 4. Now that 'moveObjects' is correctly typed, you can map over it.
+        const moveIds = moveObjects.map(moveObject => moveObject.id);
+
+        return moveIds; // Returns the clean array, e.g., [12, 34, 56]
+    }
+
+
+    const writeBattleDB = async (nft: any) => {
+
+        const moves = await fetchRandomMoveIds();
+
+        // 2. Guard against errors or an empty array
+        if (!moves || moves.length < 3) {
+            console.error("Could not fetch 3 move IDs for the battle.");
+            return;
+        }
+        const { data, error } = await supabase
+            .from('battles')
+            .insert({ monster: nft.id, opp_m: getRandomInt(0, 9), pH: nft.health, pE: 15, oH: getRandomInt(10, 100), oE: 15, m1: moves[0], m2: moves[1], m3: moves[3] })
+            .select('id');
+
+        if (error) {
+            console.error('Error inserting data:', error);
+        } else if (data) {
+            const newId = data[0].id;
+            console.log('Newly inserted ID:', newId);
+
+            router.push(`/battle/${newId}`);
+
+        }
+
+
+    }
 
     // Stat color mapping
     const getStatColor = (stat: number, type: string) => {
@@ -206,12 +274,12 @@ export default function CollectionPage() {
                                     </div>
 
                                     {/* Battle Button */}
-                                    <Link
-                                        href={`/battle/${nft.mintAddress}`}
+                                    <button
+                                        onClick={() => writeBattleDB(nft)}
                                         className="block w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 rounded-xl text-center shadow-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
                                     >
                                         ⚔️ Battle
-                                    </Link>
+                                    </button>
                                 </div>
                             ))}
                         </div>
