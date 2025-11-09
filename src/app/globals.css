@@ -24,3 +24,59 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+
+
+
+/* === Draggable Card Container Styles === */
+
+/* Container — maintains smooth interactions and 3D depth */
+.draggable-card-container {
+  position: relative;
+  perspective: 2000px;
+  user-select: none;
+  overflow: visible;
+}
+
+/* Individual draggable cards */
+.draggable-card-body {
+  position: absolute;
+  cursor: grab;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  will-change: transform;
+  z-index: 5;
+}
+
+.draggable-card-body:active {
+  cursor: grabbing;
+  z-index: 10;
+  transform: scale(1.05) rotate(var(--tilt, 0deg));
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.35);
+}
+
+/* Add floating hover depth for non-drag states */
+.draggable-card-body:hover {
+  transform: translateY(-6px) rotate(var(--tilt, 0deg));
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Smooth reordering transitions */
+.draggable-card-body.is-dragging {
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Optional — slight floating animation when idle */
+@keyframes floatCard {
+  0% { transform: translateY(0px) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-4px) rotate(calc(var(--tilt, 0deg) + 0.5deg)); }
+  100% { transform: translateY(0px) rotate(var(--tilt, 0deg)); }
+}
+
+.draggable-card-body:not(:active):not(.is-dragging) {
+  animation: floatCard 6s ease-in-out infinite;
+}
+

@@ -4,8 +4,41 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import Link from 'next/link';
 
+import {
+  DraggableCardBody,
+  DraggableCardContainer,
+} from "@/components/ui/draggable-card";
+
+
 export default function HomePage() {
   const { connected, publicKey } = useWallet();
+
+  const items = [
+    {
+      title: "Grimnaw",
+      image:
+        "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762625288128-bg1tapadg.png",
+      className: "absolute top-10 left-[20%] rotate-[-5deg]",
+    },
+
+    {
+      title: "Glare Shard",
+      image:
+        "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762630214109-eua1wdnl4.png",
+      className: "absolute top-5 left-[40%] rotate-[8deg]",
+    },
+    {
+      title: "Ruffianne",
+      image:"https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762637094307-buiocpdwo.png",
+      className: "absolute top-5 left-[40%] rotate-[8deg]",
+    },
+    {
+      title: "Pestergeist",
+      image:"https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762637730777-hdwrn8x89.png",
+      className: "absolute top-5 left-[40%] rotate-[8deg]",
+    }
+    
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br  text-white">
@@ -83,6 +116,25 @@ export default function HomePage() {
           </div>
         </div>
 
+
+        <DraggableCardContainer className="relative flex min-h-screen w-full items-center justify-center overflow-clip">
+      <p className="absolute top-1/2 mx-auto max-w-sm -translate-y-3/4 text-center text-2xl font-black text-neutral-400 md:text-4xl dark:text-neutral-800">
+       These are a couple of the different monster we have created
+      </p>
+      {items.map((item) => (
+        <DraggableCardBody className={item.className}>
+          <img
+            src={item.image}
+            alt={item.title}
+            className="pointer-events-none relative z-10 h-80 w-80 object-cover"
+          />
+          <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">
+            {item.title}
+          </h3>
+        </DraggableCardBody>
+      ))}
+    </DraggableCardContainer>
+    
         {/* Features */}
         <div className="mt-20 grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
