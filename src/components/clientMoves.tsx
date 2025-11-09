@@ -51,7 +51,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
         console.log(adv[attack_move.type] + " " + defender.type);
         console.log("Attacker: " + attack_move.type + " Defender:  " + defender.type + " -> " + type_mult)
         const damage = (attack_move.attack_multiplier * attacker.attack * type_mult) / (defense_move.defense_multiplier * defender.defense)
-        return Math.round(damage * 10);
+        return Math.round(damage * 5);
     }
 
     async function setPlayerDB(playerDamage: number, energy: number) {
@@ -124,7 +124,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
             if (pcm && ocm) {
                 const opponentDamage = calculateDamage(pcm, player, ocm, opponent);
-                const playerDamage = calculateDamage(ocm, opponent, pcm, player);
+                const playerDamage = Math.round(calculateDamage(ocm, opponent, pcm, player) * 0.8);
 
                 if (pcm.speed_multiplier * player.speed <= ocm.speed_multiplier * opponent.speed) {
                     if (await setPlayerDB(playerDamage, pcm.energy_cost) > 0) {
@@ -316,7 +316,6 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
             }
             {popup && (
                 <>
-                    <h2>{popup.move.name} was used!</h2>
                     <AttackPopups
                         key={popup.id}
                         move={popup.move}

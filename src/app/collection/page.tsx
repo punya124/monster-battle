@@ -49,7 +49,8 @@ export default function CollectionPage() {
             const { data, error } = await supabase
                 .from('monsters')
                 .select('*, owner_wallet')
-                .eq('owner_wallet', publicKey.toBase58());
+                .eq('owner_wallet', publicKey.toBase58())
+                .order('created_at', { ascending: false });
 
             console.log('Query error:', error);
             console.log('Query data:', data);
