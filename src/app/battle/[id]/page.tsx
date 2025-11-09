@@ -21,18 +21,9 @@ interface Props {
 }
 
 export default async function BattlePage({ params }: Props) {
-    //const { id } = await params;
-    const battleID = 4;
-    
-    const monMoves = () =>{
-        const ranges = [
-            [0, 10],
-            [11, 20],
-            [21, 30],
-        ];
-        return ranges.map(([min, max]) =>
-        Math.floor(Math.random() * (max - min + 1)) + min);
-    }
+    const { id } = await params;
+    const battleID = id;
+
     const { data: battle, error: errBat } = await supabase
         .from('battles')
         .select('*')
@@ -40,7 +31,7 @@ export default async function BattlePage({ params }: Props) {
         .single();
     if (errBat) {
         console.log("battle not found")
-         notFound(); // Shows 404 if monster not found
+        notFound(); // Shows 404 if monster not found
     }
 
     const { data: opponent, error: errMons } = await supabase
@@ -50,9 +41,9 @@ export default async function BattlePage({ params }: Props) {
         .single();
     if (errMons) {
         console.log("enemy monster not found")
-         notFound(); // Shows 404 if monster not found
+        notFound(); // Shows 404 if monster not found
     }
-    
+
     const { data: player, error: errPl } = await supabase
         .from('monsters')
         .select('*')
@@ -60,7 +51,7 @@ export default async function BattlePage({ params }: Props) {
         .single();
     if (errPl) {
         console.log("player monster not found")
-         notFound(); // Shows 404 if monster not found
+        notFound(); // Shows 404 if monster not found
     }
     // const runMove = async (attack: number) => {
     //     window.alert("ran");
@@ -70,34 +61,34 @@ export default async function BattlePage({ params }: Props) {
     //     player,
     //     opponent
     // ))
-    
-    // action here
-        // try {
-        //     const response = await fetch('/api/combat', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({
-        //             battleID: battleID,
-        //             attack_id1: battle.moves[attack],
-        //             attack_id2: monMoves(),
-        //             player:{health: battle.player_health, energy:battle.player_energy},
-        //             opp:{health: battle.opp_health, energy:battle.opp_energy},
-        //             monster1: player,
-        //             monster2:opponent
 
-        //         })
-        //     })
-        //     const result = await response.json();
-        //     if(result){
-        //         window.alert(result);
-        //     } else {
-        //         alert("No stats")
-        //     }
-        // } catch(error){
-        //     console.error('combat api failed:', error);
-        //     alert('Failed call api. Please try again.');
-        // }
-    
+    // action here
+    // try {
+    //     const response = await fetch('/api/combat', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({
+    //             battleID: battleID,
+    //             attack_id1: battle.moves[attack],
+    //             attack_id2: monMoves(),
+    //             player:{health: battle.player_health, energy:battle.player_energy},
+    //             opp:{health: battle.opp_health, energy:battle.opp_energy},
+    //             monster1: player,
+    //             monster2:opponent
+
+    //         })
+    //     })
+    //     const result = await response.json();
+    //     if(result){
+    //         window.alert(result);
+    //     } else {
+    //         alert("No stats")
+    //     }
+    // } catch(error){
+    //     console.error('combat api failed:', error);
+    //     alert('Failed call api. Please try again.');
+    // }
+
 
 
     return (
@@ -114,7 +105,7 @@ export default async function BattlePage({ params }: Props) {
                     <h2 className="text-2xl font-bold text-white mt-2">{opponent.name}</h2>
                     <div className="flex items-center justify-center space-x-2 mt-1">
                         <div className="w-32 bg-gray-700 rounded-full h-2">
-                            
+
                         </div>
                         <span className="text-white text-sm">{battle.opp_health}: HP</span>
                     </div>
@@ -135,7 +126,7 @@ export default async function BattlePage({ params }: Props) {
                             <h2 className="text-xl font-bold text-white">{player.name}</h2>
                             <div className="flex items-center space-x-2">
                                 <div className="w-24 bg-gray-700 rounded-full h-2">
-                                    
+
                                 </div>
                                 <span className="text-white">{battle.player_health} HP</span>
                             </div>
@@ -170,8 +161,8 @@ export default async function BattlePage({ params }: Props) {
             </div>
         </div>
 
-    
-    
-    
+
+
+
     )
 }
