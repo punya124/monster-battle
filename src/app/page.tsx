@@ -24,8 +24,8 @@ export default function HomePage() {
     {
       title: "Glare Shard",
       image:
-        "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762630214109-eua1wdnl4.png",
-      className: "absolute top-5 left-[40%] rotate-[8deg]",
+        "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762624818286-m8bcz98hd.png",
+      className: "absolute top-20 right-[35%] rotate-[2deg]",
     },
     {
       title: "Ruffianne",
@@ -34,10 +34,21 @@ export default function HomePage() {
     },
     {
       title: "Pestergeist",
-      image: "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762637730777-hdwrn8x89.png",
-      className: "absolute top-5 left-[40%] rotate-[8deg]",
-    }
-
+      image: "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762657245587-bib7uh81t.png",
+      className: "absolute top-32 left-[55%] rotate-[10deg]",
+    },
+    {
+      title: "Rambeast",
+      image:
+        "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762683239767-yvtcyvphh.png",
+      className: "absolute top-24 left-[45%] rotate-[-7deg]",
+    },
+    {
+      title: "Firefly",
+      image:
+        "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762683288148-t3dsqfyu3.png",
+      className: "absolute top-8 left-[30%] rotate-[4deg]",
+    },
   ];
 
   return (
@@ -119,7 +130,7 @@ export default function HomePage() {
 
         <DraggableCardContainer className="relative flex min-h-screen w-full items-center justify-center overflow-clip">
           <p className="absolute top-1/2 mx-auto max-w-sm -translate-y-3/4 text-center text-2xl font-black text-neutral-400 md:text-4xl dark:text-neutral-800">
-            These are a couple of the different monster we have created
+            All these with just your creativity and a stroke of a pen.
           </p>
           {items.map((item) => (
 
@@ -149,8 +160,8 @@ export default function HomePage() {
           </div>
 
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">
-            <h3 className="text-xl font-bold mb-2">PvP Battles</h3>
-            <p className="text-gray-300">Fight other players in real-time</p>
+            <h3 className="text-xl font-bold mb-2">Battle Arena</h3>
+            <p className="text-gray-300">Fight other characters in real-time</p>
           </div>
         </div>
 

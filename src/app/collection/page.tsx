@@ -138,7 +138,7 @@ export default function CollectionPage() {
         }
         const { data, error } = await supabase
             .from('battles')
-            .insert({ monster_id: nft.id, opp_mon_id: getRandomInt(1, 9), player_health: nft.health, player_energy: 15, opp_health: getRandomInt(40, 60), opp_energy: 15, moves: moves })
+            .insert({ monster_id: nft.id, opp_mon_id: 9, player_health: nft.health, player_energy: 15, opp_health: getRandomInt(40, 60), opp_energy: 15, moves: moves })
             .select('id');
 
         if (error) {
