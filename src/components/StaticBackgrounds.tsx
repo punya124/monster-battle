@@ -41,8 +41,13 @@ export default function StaticBackground({
 
     return (
         <div
-            className={['relative w-full h-full', className].join(' ')}
-            style={bgStyle}
+            className={['relative w-screen h-screen', className].join(' ')}
+            style={{
+                ...(bgStyle ?? {}),
+                backgroundSize: 'cover',         // or 'contain' to avoid any cropping
+                backgroundPosition: 'center',    // keep centered
+                backgroundRepeat: 'no-repeat',   // prevent tiling
+            }}
             role="img"
             aria-label={url ? 'Background image' : 'No background'}
         >
@@ -51,12 +56,14 @@ export default function StaticBackground({
                 style={{
                     position: 'absolute',
                     inset: 0,
-                    background:
-                        'linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.35))',
+                    background: 'linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.35))',
                     pointerEvents: 'none',
                 }}
             />
-            <div style={{ position: 'relative' }}>{children}</div>
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                {children}
+            </div>
         </div>
+
     );
 }

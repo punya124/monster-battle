@@ -4,6 +4,7 @@ import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect,
 import { HealthBar } from './ui/HealthBar';
 import WinLosePopup from './WinLosePopup';
 import AttackPopups from '@/components/AttackPopups';
+import StaticBackground from './StaticBackgrounds';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -19,8 +20,9 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
     const [battleData, setBattleData] = useState(battle);
     const [playerHealth, setPlayerHealth] = useState(battle.player_health);
-    const [opponentHealth, setOpponentHealth] = useState(battle.opp_health)
-    const [died, setDied] = useState(false);    
+    const [opponentHealth, setOpponentHealth] = useState(battle.opp_health);
+    const [popup, setPopup] = useState<null | { move: any; damage: number; receiver: 'p' | 'o'; id: number }>(null);
+
     useEffect(() => {
         setBattleData(battle);
     }, [playerHealth, opponentHealth]);
@@ -28,25 +30,25 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
     function calculateDamage(attack_move: any, attacker: any, defense_move: any, defender: any): number {
         const adv: any = {
-            "Fairy" : "Fight",
-            "Fight" : "Fright",
+            "Fairy": "Fight",
+            "Fight": "Fright",
             "Fright": "Fairy"
         }
 
-        let type_mult:number = 1;
-        if(attack_move == "Neutral" || adv[defender.type] == "Neutral"){
+        let type_mult: number = 1;
+        if (attack_move == "Neutral" || adv[defender.type] == "Neutral") {
             type_mult = 1;
-        } else if(adv[attack_move.type] === defender.type){
+        } else if (adv[attack_move.type] === defender.type) {
             console.log(adv[attack_move.type] + " " + defender.type)
             type_mult = 2;
-        
-        } else if(adv[defender.type] === attack_move.type){
+
+        } else if (adv[defender.type] === attack_move.type) {
             type_mult = 0.5
         }
         console.log(attack_move.type);
         console.log(adv[attack_move.type] + " " + defender.type);
         console.log("Attacker: " + attack_move.type + " Defender:  " + defender.type + " -> " + type_mult)
-        const damage = (attack_move.attack_multiplier * attacker.attack* type_mult) / (defense_move.defense_multiplier * defender.defense)
+        const damage = (attack_move.attack_multiplier * attacker.attack * type_mult) / (defense_move.defense_multiplier * defender.defense)
         return Math.round(damage * 10);
     }
 
@@ -95,6 +97,8 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    const wait = (ms: number) => new Promise<void>(res => setTimeout(res, ms));
+
     async function runMove(moveNo: number): Promise<void> {
         const opp_move = getRandomInt(1, 30)
 
@@ -125,10 +129,17 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                         setOppDB(opponentDamage, ocm.energy)
                     }
 
+                    // when player gets hit:
+                    setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
+
+                    await wait(1500); // let popup animate
+
                     setPlayerHealth(playerHealth - playerDamage);
                     if (playerHealth > 0) {
                         setOpponentHealth(opponentHealth - opponentDamage);
                     }
+                    // when opponent gets hit:
+                    setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
 
 
                 }
@@ -137,11 +148,19 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                         setPlayerDB(playerDamage, pcm.energy)
                     }
 
+                    // when opponent gets hit:
+                    setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
+
+                    await wait(1500); // let popup animate
 
                     setOpponentHealth(opponentHealth - opponentDamage);
                     if (playerHealth > 0) {
                         setPlayerHealth(playerHealth - playerDamage);
                     }
+
+                    // when player gets hit:
+                    setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
+
 
                 }
             }
@@ -168,7 +187,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                 <img
                     src={opponent.image_url}
                     alt={opponent.name}
-                    className="h-3/4 w-3/4 object-cover m-1"
+                    className="h-3/4 w-auto object-cover m-1"
                 />
             </div>
             <div className="w-1/2 h-64 rounded-4xl bg-gray-800 absolute right-0 -top-8 z-1 p-4 pr-[25%] flex flex-col gap-4 justify-center">
@@ -275,6 +294,14 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                     })}
                 </div>
             </div>
+            {popup && (
+                <AttackPopups
+                    key={popup.id}
+                    move={popup.move}
+                    damage={popup.damage}
+                    receiver={popup.receiver}
+                />
+            )}
             {
                 playerHealth <= 0 && (
                     <WinLosePopup

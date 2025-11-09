@@ -60,7 +60,7 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
     // Opponent target: start bottom-left, travel to top-right.
     // Player target: start top-right, travel to bottom-left.
     // Bump is slightly higher at 70% along the diagonal.
-    const dur = 700; // ms, sync with your popup delay sequence
+    const dur = 1000; // ms, sync with your popup delay sequence
     const projStyle: React.CSSProperties =
         receiver === 'o'
             ? {
@@ -92,7 +92,7 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
                         : move?.type === 'Fight'
                             ? '/magic_images/fight.png'
                             : '/magic_images/fairy.png' // Neutral and any other fallback
-                } alt="projectile" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                } alt="projectile" style={{ width: '200%', height: '200%', objectFit: 'contain' }} />
             </div>
 
             {/* Damage popup */}
