@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -98,7 +99,7 @@ export default function CollectionPage() {
     }
 
     async function fetchRandomMoveIds(): Promise<number[] | null> {
-        // 1. Make the RPC call without the generic type. 'data' will be of type 'any'.
+        // 1. Make the RPC call.
         const { data, error } = await supabase
             .rpc('get_three_random_move_ids');
 
@@ -107,24 +108,25 @@ export default function CollectionPage() {
             return null;
         }
 
-        // 2. Use a type assertion to tell TypeScript the actual shape of 'data'.
-        const moveObjects = data as { id: number }[];
+        // 2. Assert the correct type: an array of numbers.
+        const moveIds = data as number[];
 
-        // 3. Handle the case where no data is returned.
-        if (!moveObjects) {
+        // 3. Handle the case where the data might be null or not an array.
+        if (!Array.isArray(moveIds)) {
+            console.error("Data received is not an array:", moveIds);
             return [];
         }
 
-        // 4. Now that 'moveObjects' is correctly typed, you can map over it.
-        const moveIds = moveObjects.map(moveObject => moveObject.id);
-
-        return moveIds; // Returns the clean array, e.g., [12, 34, 56]
+        // 4. Return the data directly. It's already in the correct format.
+        console.log('Successfully fetched move IDs:', moveIds);
+        return moveIds; // Returns [12, 34, 56]
     }
 
 
     const writeBattleDB = async (nft: any) => {
 
         const moves = await fetchRandomMoveIds();
+        console.log(moves)
 
         // 2. Guard against errors or an empty array
         if (!moves || moves.length < 3) {
@@ -133,7 +135,7 @@ export default function CollectionPage() {
         }
         const { data, error } = await supabase
             .from('battles')
-            .insert({ monster: nft.id, opp_m: getRandomInt(0, 9), pH: nft.health, pE: 15, oH: getRandomInt(10, 100), oE: 15, m1: moves[0], m2: moves[1], m3: moves[3] })
+            .insert({ monster_id: nft.id, opp_mon_id: getRandomInt(0, 9), player_health: nft.health, player_energy: 15, opp_health: getRandomInt(10, 100), opp_energy: 15, moves: moves })
             .select('id');
 
         if (error) {
