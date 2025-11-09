@@ -1,6 +1,7 @@
 'use client';
 import { createClient } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import { HealthBar } from './ui/HealthBar';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -132,72 +133,132 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
     }
 
     return (
-        <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
+        <div className="min-h-screen bg-white flex flex-col relative overflow-hidden outli">
             {/* Opponent Section */}
-            <div className="h-100 w-100 rounded-full bg-black absolute right-[-4rem] top-[-4rem] overflow-hidden flex items-center justify-center">
+            <div className={[
+                "h-100 w-100 rounded-full bg-black absolute -right-16 -top-16 overflow-hidden flex items-end-safe justify-center",
+                // valid z-index utility
+                "z-10",
+                // outline color by player.type
+                opponent.type === "Fight"
+                    ? "outline outline-2 outline-red-500"
+                    : opponent.type === "Fairy"
+                        ? "outline outline-2 outline-pink-500"
+                        : opponent.type === "Fright"
+                            ? "outline outline-2 outline-purple-950"
+                            : "outline outline-2 outline-white", // Neutral / default
+            ].join(" ")}
+            >
                 <img
                     src={opponent.image_url}
                     alt={opponent.name}
-                    className="h-3/4 w-3/4 object-cover"
+                    className="h-3/4 w-3/4 object-cover m-1"
                 />
             </div>
+            <div className="w-1/2 h-64 rounded-4xl bg-gray-800 absolute right-0 -top-8 z-1 p-4 pr-[25%] flex flex-col gap-4 justify-center">
+                <h2 className="text-white text-3xl font-semibold pl-8">{opponent.name}</h2>
 
-            <div className="flex-1 flex flex-col items-center justify-end p-4">
-                <div className="text-center z-10">
-
-                    <h1>{opponent.imageUrl}</h1>
-                    <h2 className="text-2xl font-bold text-gray-500 mt-2">{opponent.name}</h2>
-                    <div className="flex items-center justify-center space-x-2 mt-1">
-                        <div className="w-32 bg-gray-700 rounded-full h-2">
-
-                        </div>
-                        <span className="text-gray-500 text-sm">{opponentHealth}: HP</span>
+                <div className="grid grid-cols-3 gap-4">
+                    {/* Item 1 */}
+                    <div className="flex flex-col items-center justify-center text-white">
+                        <span className="text-xl font-bold leading-none">{opponent.attack}</span>
+                        <span className="text-xs uppercase tracking-widest mt-1">ATK</span>
                     </div>
-                    <p className="text-gray-500 text-lg">Level {opponent.level} | Attack: {opponent.attack}</p>
+
+                    {/* Item 2 */}
+                    <div className="flex flex-col items-center justify-center text-white">
+                        <span className="text-xl font-bold leading-none">{opponent.defense}</span>
+                        <span className="text-xs uppercase tracking-widest mt-1">DEF</span>
+                    </div>
+
+                    {/* Item 3 */}
+                    <div className="flex flex-col items-center justify-center text-white">
+                        <span className="text-xl font-bold leading-none">{opponent.speed}</span>
+                        <span className="text-xs uppercase tracking-widest mt-1">SPD</span>
+                    </div>
                 </div>
+                <HealthBar hp={opponentHealth} maxhp={battle.opp_health} className="max-w-lg" />
             </div>
 
             {/* Player Section */}
-            <div className="h-100 w-100 rounded-full bg-black absolute left-[-4rem] bottom-[-4rem] overflow-hidden flex items-center justify-center">
+            <div
+                className={[
+                    "h-100 w-100 rounded-full bg-black absolute left-[-4rem] bottom-[-4rem] overflow-hidden flex items-start justify-center",
+                    // valid z-index utility
+                    "z-10",
+                    // outline color by player.type
+                    player.type === "Fight"
+                        ? "outline outline-2 outline-red-500"
+                        : player.type === "Fairy"
+                            ? "outline outline-2 outline-pink-500"
+                            : player.type === "Fright"
+                                ? "outline outline-2 outline-purple-950"
+                                : "outline outline-2 outline-white", // Neutral / default
+                ].join(" ")}
+            >
                 <img
                     src={player.image_url}
                     alt={player.name}
-                    className="h-3/4 w-auto object-cover"
+                    className="h-3/4 w-auto object-cover m-1"
                 />
             </div>
-            <div className="h-1/2 relative p-4 flex items-end">
-                <div className="w-full flex items-end justify-between">
-                    <div className="flex-1 flex justify-center">
-                        <div className="ml-4 text-left">
-                            <h2 className="text-xl font-bold text-gray-500">{player.name}</h2>
-                            <div className="flex items-center space-x-2">
-                                <div className="w-24 bg-gray-700 rounded-full h-2">
 
-                                </div>
-                                <span className="text-gray-500">{playerHealth} HP</span>
-                            </div>
-                            <p className="text-gray-500">Level {player.level} | Attack: {player.attack}</p>
-                        </div>
+            <div className="w-1/2 h-64 rounded-4xl bg-gray-800 absolute left-0 -bottom-8 z-1 p-4 pl-[25%] flex flex-col gap-4 justify-center">
+                <h2 className="text-white text-3xl font-semibold pl-8">{player.name}</h2>
+
+                <div className="grid grid-cols-3 gap-4">
+                    {/* Item 1 */}
+                    <div className="flex flex-col items-center justify-center text-white">
+                        <span className="text-xl font-bold leading-none">{player.attack}</span>
+                        <span className="text-xs uppercase tracking-widest mt-1">ATK</span>
                     </div>
-                    <div className="flex flex-col space-y-3 mr-6">
-                        <button
-                            onClick={() => runMove(0)}
-                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-700 text-gray-500 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200"
-                        >
-                            {moves[0].name}
-                        </button>
-                        <button
-                            onClick={() => runMove(1)}
-                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-red-700 text-gray-500 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200">
-                            {moves[1].name}
-                        </button>
-                        <button
-                            onClick={() => runMove(2)}
-                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-700 text-gray-500 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200">
-                            {moves[2].name}
-                        </button>
+
+                    {/* Item 2 */}
+                    <div className="flex flex-col items-center justify-center text-white">
+                        <span className="text-xl font-bold leading-none">{player.defense}</span>
+                        <span className="text-xs uppercase tracking-widest mt-1">DEF</span>
+                    </div>
+
+                    {/* Item 3 */}
+                    <div className="flex flex-col items-center justify-center text-white">
+                        <span className="text-xl font-bold leading-none">{player.speed}</span>
+                        <span className="text-xs uppercase tracking-widest mt-1">SPD</span>
                     </div>
                 </div>
+                <HealthBar hp={playerHealth} maxhp={battle.player_health} className="max-w-lg" />
+            </div>
+            <div className="h-3/4 w-80 rounded-4xl bg-gray-800 absolute -left-8 bottom-0 z-1 p-4 pb-[25%] items-center">
+
+                <div className="flex flex-col space-y-3 ml-2">
+                    {moves.slice(0, 3).map((m: { type: string; id: any; name: string; }, i: number) => {
+                        // Inline outline color based on type
+                        const outline =
+                            m.type === "Fight"
+                                ? "outline outline-2 outline-red-500"
+                                : m.type === "Fairy"
+                                    ? "outline outline-2 outline-pink-300"
+                                    : m.type === "Fright"
+                                        ? "outline outline-2 outline-purple-950"
+                                        : "outline outline-2 outline-white"; // Neutral or fallback
+
+                        return (
+                            <button
+                                key={m.id ?? m.name ?? i}
+                                onClick={() => runMove(i)}
+                                className={[
+                                    "px-5 py-2 m-6 rounded-xl",
+                                    "bg-transparent text-white", // no background, white text
+                                    outline, // inline computed outline
+                                    "hover:scale-105 transition-transform duration-200",
+                                    "focus:outline-offset-2",
+                                ].join(" ")}
+                            >
+                                {m.name}
+                            </button>
+                        );
+                    })}
+                </div>
+
             </div>
         </div>
     );
