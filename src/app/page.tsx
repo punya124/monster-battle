@@ -29,15 +29,15 @@ export default function HomePage() {
     },
     {
       title: "Ruffianne",
-      image:"https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762637094307-buiocpdwo.png",
+      image: "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762637094307-buiocpdwo.png",
       className: "absolute top-5 left-[40%] rotate-[8deg]",
     },
     {
       title: "Pestergeist",
-      image:"https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762637730777-hdwrn8x89.png",
+      image: "https://wpvztcbkqizfzsrmkfaw.supabase.co/storage/v1/object/public/monster-images/public/enhanced-monster-1762637730777-hdwrn8x89.png",
       className: "absolute top-5 left-[40%] rotate-[8deg]",
     }
-    
+
   ];
 
   return (
@@ -118,23 +118,24 @@ export default function HomePage() {
 
 
         <DraggableCardContainer className="relative flex min-h-screen w-full items-center justify-center overflow-clip">
-      <p className="absolute top-1/2 mx-auto max-w-sm -translate-y-3/4 text-center text-2xl font-black text-neutral-400 md:text-4xl dark:text-neutral-800">
-       These are a couple of the different monster we have created
-      </p>
-      {items.map((item) => (
-        <DraggableCardBody className={item.className}>
-          <img
-            src={item.image}
-            alt={item.title}
-            className="pointer-events-none relative z-10 h-80 w-80 object-cover"
-          />
-          <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">
-            {item.title}
-          </h3>
-        </DraggableCardBody>
-      ))}
-    </DraggableCardContainer>
-    
+          <p className="absolute top-1/2 mx-auto max-w-sm -translate-y-3/4 text-center text-2xl font-black text-neutral-400 md:text-4xl dark:text-neutral-800">
+            These are a couple of the different monster we have created
+          </p>
+          {items.map((item) => (
+
+            <DraggableCardBody className={item.className} key={item.image}>
+              <img
+                src={item.image}
+                alt={item.title}
+                className="pointer-events-none relative z-10 h-80 w-80 object-cover"
+              />
+              <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">
+                {item.title}
+              </h3>
+            </DraggableCardBody>
+          ))}
+        </DraggableCardContainer>
+
         {/* Features */}
         <div className="mt-20 grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur rounded-lg p-6 text-center">

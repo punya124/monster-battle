@@ -132,7 +132,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                     // when player gets hit:
                     setPopup({ move: ocm, damage: playerDamage, receiver: 'p', id: Date.now() });
 
-                    await wait(1500); // let popup animate
+                    await wait(2500); // let popup animate
 
                     setPlayerHealth(playerHealth - playerDamage);
                     if (playerHealth > 0) {
@@ -151,7 +151,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                     // when opponent gets hit:
                     setPopup({ move: pcm, damage: opponentDamage, receiver: 'o', id: Date.now() });
 
-                    await wait(1500); // let popup animate
+                    await wait(2500); // let popup animate
 
                     setOpponentHealth(opponentHealth - opponentDamage);
                     if (playerHealth > 0) {

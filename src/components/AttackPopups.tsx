@@ -18,39 +18,46 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
             style.textContent = `
 @keyframes damagePopInline {
   0%   { opacity: 0; transform: translate(-50%, -50%) translateY(0) scale(0.9); }
-  10%  { opacity: 1; transform: translate(-50%, -50%) translateY(-6px) scale(1.05); }
-  40%  { opacity: 1; filter: brightness(1.6); }
-  70%  { opacity: 0.8; filter: brightness(1); }
+  10%  { opacity: 1; transform: translate(-50%, -50%) translateY(-6px) scale(1.1); filter: brightness(1.8) saturate(1.2); }
+  40%  { opacity: 1; filter: brightness(1.2) saturate(1.05); }
+  70%  { opacity: 0.9; filter: brightness(1) saturate(1); }
   100% { opacity: 0; transform: translate(-50%, -50%) translateY(-18px) scale(1.05); }
 }
 
-/* Straight diagonal with a little extra height at 70% */
+/* Straight diagonal with a little extra height at 70% + subtle spin/scale */
 @keyframes diagBump {
-  0%   { transform: translate(0, 0); opacity: 0; }
-  10%  { opacity: 1; }
-  70%  { transform: translate(var(--dx70), var(--dy70)); }  /* slight 'higher' bump */
-  100% { transform: translate(var(--dx), var(--dy)); opacity: 0; }
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0; filter: brightness(1) saturate(1); }
+  10%  { opacity: 1; filter: brightness(1.6) saturate(1.2); }
+  70%  { transform: translate(var(--dx70), var(--dy70)) rotate(8deg) scale(1.15); }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(14deg) scale(1.1); opacity: 0; filter: brightness(1) saturate(1); }
 }
 .projectile {
   position: absolute;
-  width: 64px; height: 64px;
+  width: 140px; height: 140px;
   pointer-events: none; user-select: none;
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
   animation: diagBump var(--dur) ease-out forwards;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
+  /* Strong multi-layer glow for visibility on busy backgrounds */
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,0.75))
+    drop-shadow(0 0 22px rgba(255,255,255,0.55))
+    drop-shadow(0 6px 10px rgba(0,0,0,0.45));
 }
 .damage-popup {
   position: absolute;
   pointer-events: none; user-select: none;
-  animation: damagePopInline 600ms ease-out forwards;
-  font-weight: 800; font-size: 20px; letter-spacing: 0.02em;
-  text-shadow: 0 1px 0 rgba(0,0,0,.45), 0 0 10px rgba(255,255,255,.35);
+  animation: damagePopInline 2000ms ease-out forwards;
+  font-weight: 900; font-size: 24px; letter-spacing: 0.02em;
+  text-shadow:
+    0 0 8px rgba(255,255,255,0.5),
+    0 2px 10px rgba(0,0,0,0.45);
   padding: 2px 6px; border-radius: 4px; 
 }
 `;
             document.head.appendChild(style);
         }
     }, []);
+
 
     // Target anchor position: player at 1/3, opponent at 2/3
     const popupX = receiver === "p" ? "33.3333%" : "66.6667%";
@@ -60,7 +67,7 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
     // Opponent target: start bottom-left, travel to top-right.
     // Player target: start top-right, travel to bottom-left.
     // Bump is slightly higher at 70% along the diagonal.
-    const dur = 1000; // ms, sync with your popup delay sequence
+    const dur = 2000; // ms, sync with your popup delay sequence
     const projStyle: React.CSSProperties =
         receiver === 'o'
             ? {
@@ -86,13 +93,24 @@ export default function AttackPopups({ move, damage, receiver }: AttackPopupProp
         <>
             {/* Projectile */}
             <div className="projectile" style={projStyle}>
-                <img src={
-                    move?.type === 'Fright'
-                        ? '/magic_images/fright.png'
-                        : move?.type === 'Fight'
-                            ? '/magic_images/fight.png'
-                            : '/magic_images/fairy.png' // Neutral and any other fallback
-                } alt="projectile" style={{ width: '200%', height: '200%', objectFit: 'contain' }} />
+                <img
+                    src={
+                        move?.type === 'Fright'
+                            ? '/magic_images/fright.png'
+                            : move?.type === 'Fight'
+                                ? '/magic_images/fight.png'
+                                : '/magic_images/fairy.png'
+                    }
+                    alt="projectile"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        /* Optional extra inner glow to amplify visibility */
+                        filter:
+                            'drop-shadow(0 0 6px rgba(255,255,255,0.85)) drop-shadow(0 0 16px rgba(255,255,255,0.45))',
+                    }}
+                />
             </div>
 
             {/* Damage popup */}
