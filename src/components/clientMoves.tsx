@@ -20,15 +20,33 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
     const [battleData, setBattleData] = useState(battle);
     const [playerHealth, setPlayerHealth] = useState(battle.player_health);
     const [opponentHealth, setOpponentHealth] = useState(battle.opp_health)
-
+    const [died, setDied] = useState(false);    
     useEffect(() => {
-        console.log(player, opponent)
         setBattleData(battle);
-        console.log(playerHealth, opponentHealth)
     }, [playerHealth, opponentHealth]);
 
+
     function calculateDamage(attack_move: any, attacker: any, defense_move: any, defender: any): number {
-        const damage = (attack_move.attack_multiplier * attacker.attack) / (defense_move.defense_multiplier * defender.defense)
+        const adv: any = {
+            "Fairy" : "Fight",
+            "Fight" : "Fright",
+            "Fright": "Fairy"
+        }
+
+        let type_mult:number = 1;
+        if(attack_move == "Neutral" || adv[defender.type] == "Neutral"){
+            type_mult = 1;
+        } else if(adv[attack_move.type] === defender.type){
+            console.log(adv[attack_move.type] + " " + defender.type)
+            type_mult = 2;
+        
+        } else if(adv[defender.type] === attack_move.type){
+            type_mult = 0.5
+        }
+        console.log(attack_move.type);
+        console.log(adv[attack_move.type] + " " + defender.type);
+        console.log("Attacker: " + attack_move.type + " Defender:  " + defender.type + " -> " + type_mult)
+        const damage = (attack_move.attack_multiplier * attacker.attack* type_mult) / (defense_move.defense_multiplier * defender.defense)
         return Math.round(damage * 10);
     }
 
@@ -97,15 +115,11 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
             const pcm = move_data.find(move => move.id === battle.moves[moveNo]);
             const ocm = move_data.find(move => move.id === opp_move);
 
-            console.log(pcm)
-            console.log(ocm)
-
 
             if (pcm && ocm) {
                 const opponentDamage = calculateDamage(pcm, player, ocm, opponent);
                 const playerDamage = calculateDamage(ocm, opponent, pcm, player);
-                console.log(opponentDamage)
-                console.log(playerDamage)
+
                 if (pcm.speed * player.speed <= ocm.speed * opponent.speed) {
                     if (await setPlayerDB(playerDamage, pcm.energy_cost) > 0) {
                         setOppDB(opponentDamage, ocm.energy)
