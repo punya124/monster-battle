@@ -99,14 +99,14 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
     const wait = (ms: number) => new Promise<void>(res => setTimeout(res, ms));
 
-    async function runMove(moveNo: number): Promise<void> {
+    async function runMove(moveId: number): Promise<void> {
         const opp_move = getRandomInt(1, 30)
 
 
         const { data: move_data, error: errMove } = await supabase
             .from('moves')
             .select('*')
-            .in('id', [battle.moves[moveNo], opp_move]);
+            .in('id', [moveId, opp_move]);
 
         if (errMove) {
             console.log("moves not found");
@@ -116,7 +116,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
 
             console.log(move_data)
 
-            const pcm = move_data.find(move => move.id === battle.moves[moveNo]);
+            const pcm = move_data.find(move => move.id === moveId);
             const ocm = move_data.find(move => move.id === opp_move);
 
 
@@ -279,7 +279,7 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                         return (
                             <button
                                 key={m.id ?? m.name ?? i}
-                                onClick={() => runMove(i)}
+                                onClick={() => runMove(m.id)}
                                 className={[
                                     "px-5 py-2 m-6 rounded-xl",
                                     "bg-transparent text-white", // no background, white text
@@ -295,12 +295,15 @@ export default function MoveButtons({ battle, player, opponent, moves }: MoveBut
                 </div>
             </div>
             {popup && (
-                <AttackPopups
-                    key={popup.id}
-                    move={popup.move}
-                    damage={popup.damage}
-                    receiver={popup.receiver}
-                />
+                <>
+                    <h2>{popup.move.name} was used!</h2>
+                    <AttackPopups
+                        key={popup.id}
+                        move={popup.move}
+                        damage={popup.damage}
+                        receiver={popup.receiver}
+                    />
+                </>
             )}
             {
                 playerHealth <= 0 && (
