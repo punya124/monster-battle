@@ -9,9 +9,10 @@ interface MoveButtonsProps {
     battle: any;
     player: any;
     opponent: any;
+    moves: any;
 }
 
-export default function MoveButtons({ battle, player, opponent }: MoveButtonsProps) {
+export default function MoveButtons({ battle, player, opponent, moves }: MoveButtonsProps) {
 
     const [battleData, setBattleData] = useState(battle);
     const [playerHealth, setPlayerHealth] = useState(battle.player_health);
@@ -131,23 +132,73 @@ export default function MoveButtons({ battle, player, opponent }: MoveButtonsPro
     }
 
     return (
-        <div className="flex flex-col space-y-3 mr-6">
-            <button
-                onClick={() => runMove(0)}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200"
-            >
-                Move 1
-            </button>
-            <button
-                onClick={() => runMove(1)}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-red-700 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200">
-                Move 2
-            </button>
-            <button
-                onClick={() => runMove(2)}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-700 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200">
-                Move 3
-            </button>
+        <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
+            {/* Opponent Section */}
+            <div className="h-100 w-100 rounded-full bg-black absolute right-[-4rem] top-[-4rem] overflow-hidden flex items-center justify-center">
+                <img
+                    src={opponent.image_url}
+                    alt={opponent.name}
+                    className="h-3/4 w-3/4 object-cover"
+                />
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-end p-4">
+                <div className="text-center z-10">
+
+                    <h1>{opponent.imageUrl}</h1>
+                    <h2 className="text-2xl font-bold text-gray-500 mt-2">{opponent.name}</h2>
+                    <div className="flex items-center justify-center space-x-2 mt-1">
+                        <div className="w-32 bg-gray-700 rounded-full h-2">
+
+                        </div>
+                        <span className="text-gray-500 text-sm">{opponentHealth}: HP</span>
+                    </div>
+                    <p className="text-gray-500 text-lg">Level {opponent.level} | Attack: {opponent.attack}</p>
+                </div>
+            </div>
+
+            {/* Player Section */}
+            <div className="h-100 w-100 rounded-full bg-black absolute left-[-4rem] bottom-[-4rem] overflow-hidden flex items-center justify-center">
+                <img
+                    src={player.image_url}
+                    alt={player.name}
+                    className="h-3/4 w-auto object-cover"
+                />
+            </div>
+            <div className="h-1/2 relative p-4 flex items-end">
+                <div className="w-full flex items-end justify-between">
+                    <div className="flex-1 flex justify-center">
+                        <div className="ml-4 text-left">
+                            <h2 className="text-xl font-bold text-gray-500">{player.name}</h2>
+                            <div className="flex items-center space-x-2">
+                                <div className="w-24 bg-gray-700 rounded-full h-2">
+
+                                </div>
+                                <span className="text-gray-500">{playerHealth} HP</span>
+                            </div>
+                            <p className="text-gray-500">Level {player.level} | Attack: {player.attack}</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-3 mr-6">
+                        <button
+                            onClick={() => runMove(0)}
+                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-700 text-gray-500 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200"
+                        >
+                            {moves[0].name}
+                        </button>
+                        <button
+                            onClick={() => runMove(1)}
+                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-red-700 text-gray-500 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200">
+                            {moves[1].name}
+                        </button>
+                        <button
+                            onClick={() => runMove(2)}
+                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-green-600 to-emerald-700 text-gray-500 font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200">
+                            {moves[2].name}
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
